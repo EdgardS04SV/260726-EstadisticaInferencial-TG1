@@ -1,0 +1,162 @@
+# Bloque B - Distribucion de Poisson
+## Problema 5. Siniestralidad en una carretera urbana.
+Una carretera urbana registra en promedio 2.3 accidentes por semana.
+
+(a) Calcule la probabilidad de que ocurran exactamente cinco accidentes en un período de dos semanas.
+
+```{r}
+lambda_s <- 2.3
+semanas <- 2
+lambda_t <- lambda_s * semanas
+k <- 5
+prob <- dpois(x = k, lambda = lambda_t)
+print(prob * 100)
+```
+
+
+
+
+La Probabilidad de que ocurran 5 accidentes en el período de 2 semanas es de 17.25255 %
+
+(b)  Calcule la probabilidad de que ocurra al menos un accidente en un día cualquiera.
+
+```{r}
+lambda_s <- 2.3
+dias_semana <- 7
+lambda_t <- lambda_s / dias_semana
+k <- 0
+prob <- 1 - dpois(x = k, lambda = lambda_t)
+print(prob * 100)
+```
+
+
+
+La probabilidad de que en un día ocurra al menos un accidente en esa carretera 28.00485%.
+
+(c)  Calcule la probabilidad de que en un mes de treinta días ocurran menos de ocho accidentes
+
+```{r}
+lambda_s <- 2.3
+dias_mes <- 30
+lambda_t <- (lambda_s / 7) * dias_mes
+q <- 7
+prob <- ppois(q = q, lambda = lambda_t)
+print(prob * 100)
+```
+
+
+La probabilidad que en un mes de 30 días ocurran menos de 8 accidentes es de 23.33657% en esa carretera.
+
+## Problema 6. Dimensionamiento de un centro de llamadas
+Un centro de llamadas recibe en promedio quince llamadas por hora. Cada agente puede atender hasta cuatro llamadas por hora sin que se produzca saturación del sistema.
+
+(a) Con tres agentes disponibles, calcule la probabilidad de saturación durante una hora cualquiera.
+
+```{r}
+lambda_a <- 15
+agentes <- 3
+capacidad_a <- 4
+capacidad_total <- agentes * capacidad_a
+prob <- 1 - ppois(q = capacidad_total, lambda = lambda_a)
+print(prob * 100)
+```
+
+
+
+La probabilidad que el centro de llamadas se sature a una hora cualquiera con tres agentes disponibles es de 73.2389%
+
+(b) Determine el número mínimo de agentes que deben contratarse para que la probabilidad de saturación en una hora sea inferior al 5 %
+
+```{r}
+lambda_a <- 15
+capacidad_a <- 4
+saturacion <- 0.05
+capacidad_min <- qpois(p = 1 - saturacion, lambda = lambda_a)
+print(capacidad_min)
+numero_agentes <- ceiling(capacidad_min / capacidad_a)
+print(numero_agentes)
+```
+
+
+
+Para reducir la saturación al 5%, tomamos el percentil 95 para calcular las llamadas que se pueden atender dentro del límite de saturación. Lo que corresponde a 22 llamadas por hora.
+Luego se calcula cuantos agentes son necesarios para atender las 22 llamadas por hora. Lo que corresponde a 6 agentes.
+
+## Problema 7. Procesos de Poisson simultáneos e independientes
+Un servidor de comercio electrónico recibe dos flujos independientes: solicitudes de compra con un promedio de ocho por minuto y solicitudes de consulta con un promedio de doce por minuto.
+
+(a) Calcule la probabilidad de que en un minuto lleguen exactamente veinticinco solicitudes en total. Justifique el modelo empleado invocando la propiedad aditiva de la distribución de Poisson.
+
+```{r}
+lambda_compras <- 8
+lambda_consultas <- 12
+lambda_total <- lambda_compras + lambda_consultas
+k <- 25
+prob <- dpois(x = k, lambda = lambda_total)
+print(prob * 100)
+```
+
+
+La propiedad aditiva establece que si X_1 y X_2 son variables aleatorias e independientes que siguen la distribución de Poisson con una tasa promedio, entonces la variable suma Y = X_1 + X_2, también sigue una distribución de Poisson con un parámetro lambda_y igual a la suma de sus tasas individuales.
+
+(b)  Determine cuál de los siguientes eventos es más probable, y por cuánto:
+
+    (i) recibir en un minuto exactamente diez solicitudes de compra y quince de consulta;
+    (ii) recibir veinticinco solicitudes en total, sin distinción de tipo. 
+
+```{r}
+lambda_cmpr <- 8
+lambda_cnslt <- 12
+lambda_total <- lambda_cmpr + lambda_cnslt
+k <- 25
+#Evento 1: 10 compras 15 consultas.
+prob_i <- dpois(x = 10, lambda = lambda_cmpr) * dpois(x = 15, lambda = lambda_cnslt)
+print(prob_i * 100)
+#Evento 2: 25 eventos totales.
+prob_ii <- dpois(x = k, lambda = lambda_total)
+print(prob_ii * 100)
+```
+
+
+El evento (i) tiene un 0.7185654% de probabilidad de ocurrir, mientras que el evento (ii) tiene un 4.458765% de ocurrencia por lo que el evento (ii) es más probable.
+
+## Problema 8. Cajero con demanda variable
+Un cajero atiende clientes durante una jornada de cinco horas. Entre las 11:00 y las 13:00 (periodode alta demanda) llegan en promedio ocho clientes por hora; entre las 13:00 y las 16:00 (demanda regular) llegan en promedio tres clientes por hora. Los flujos se modelan como procesos de Poisson independientes.
+
+(a) Calcule la probabilidad de que durante el periodo de alta demanda (dos horas completas) lleguen exactamente veinte clientes.
+
+```{r}
+tasa_alta <- 8
+horas_alta <- 2
+lambda_alta <- tasa_alta * horas_alta
+k <- 20
+prob_alta <- dpois(x = k, lambda = lambda_alta)
+print(prob_alta * 100)
+```
+
+
+La probabilidad que durante el periodo de alta demanda lleguen 20 clientes en 2 horas es de 5.591951%
+
+(b) Calcule la probabilidad de que lleguen al menos cinco clientes en la primera media hora del periodo de alta demanda y, simultáneamente, al menos tres clientes en la primera hora del periodo regular.
+
+```{r}
+#Evento 1: 30 min de alta demanda.
+tasa_alta <- 8
+horas_alta <- 0.5
+lambda_alta <- tasa_alta * horas_alta
+k_alta <- 4
+#Evento 2: 1 hora de baja demanda.
+tasa_baja <- 3
+horas_baja <- 1
+lambda_baja <- tasa_baja * horas_baja
+k_baja <- 2
+# Probabilidades individuales
+prob_alta <- ppois(q = k_alta, lambda = lambda_alta, lower.tail = FALSE)
+prob_baja <- ppois(q = k_baja, lambda = lambda_baja, lower.tail = FALSE)
+# Probabilidad conjunta por independencia.
+prob_total <- prob_alta * prob_baja
+print(prob_total * 100)
+```
+
+
+La probabilidad que al menos lleguen 5 clientes en la primera media hora del periodo de alta demanda y al menos 3 clientes en la primera hora de periodo regular es de 21.40905%
