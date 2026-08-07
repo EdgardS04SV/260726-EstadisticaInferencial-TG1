@@ -1,0 +1,273 @@
+---
+title: "Ejercicio 20"
+author: "Edgard Granados"
+date: "2026-08-07"
+output:
+  pdf_document:
+    latex_engine: xelatex
+---
+
+# Ejercicio 20
+
+## Ejercicio 20.a:
+
+Un servicio web procesa 500 solicitudes por hora.
+
+Cada solicitud tiene una probabilidad del 2 % de ser rechazada por el firewall de forma independiente.
+
+Modele el número de rechazos y calcule P(X ≤ 5) empleando la distribución exacta.
+
+### Distribución:
+
+**Binomial**
+
+### Justificación:
+
+Se utiliza una distribución Binomial porque existe un número fijo de ensayos (500 solicitudes), cada solicitud puede ser rechazada o aceptada, la probabilidad de rechazo permanece constante (p = 0.02) y las solicitudes son independientes.
+
+### Variables aleatorias:
+
+-X = Número de solicitudes rechazadas durante una hora. -X \~ Binomial(n = 500, p = 0.02)
+
+### Probabilidad solicitada:
+
+P(X ≤ 5)
+
+###Funciones utilizadas:
+
+pbinom(q, size, prob)
+
+pbinom() calcula probabilidades acumuladas del tipo: P(X ≤ q)
+
+### Código en R
+
+```{r}
+pbinom(q = 5,
+       size = 500,
+       prob = 0.02)
+```
+
+### Interpretación:
+
+El resultado representa la probabilidad de que,de las 500 solicitudes procesadas en una hora, como máximo 5 sean rechazadas por el firewall.
+
+------------------------------------------------------------------------
+
+## Ejercicio 20.b:
+
+Calcule la misma probabilidad empleando la aproximación de Poisson. Justifique la aproximación en función de los valores de n y p.
+
+### Distribución:
+
+**Poisson (aproximación de la Binomial)**
+
+### Justificación:
+
+La distribución exacta es Binomial.
+
+Sin embargo, la aproximación mediante Poisson es adecuada porque:
+
+-El número de ensayos es grande: n = 500. -La probabilidad de rechazo es pequeña: p = 0.02. -λ = n × p = 500 × 0.02 = 10.
+
+Bajo estas condiciones, la Binomial puede aproximarse mediante una Poisson con λ = 10.
+
+### Variables aleatorias:
+
+-X = Número de solicitudes rechazadas en una hora.
+
+-X \~ Poisson(λ = 10)
+
+### Probabilidad solicitada:
+
+P(X ≤ 5)
+
+###Funciones utilizadas:
+
+ppois(q, lambda) ppois() calcula probabilidades acumuladas: P(X ≤ q)
+
+### Código en R
+
+```{r}
+ppois(q = 5,
+      lambda = 10)
+
+# (Opcional) Comparación con la distribución exacta
+prob_binomial <- pbinom(q = 5,
+                        size = 500,
+                        prob = 0.02)
+
+prob_poisson <- ppois(q = 5,
+                      lambda = 10)
+
+# Mostrar resultados
+prob_binomial
+prob_poisson
+
+# Diferencia absoluta
+abs(prob_binomial - prob_poisson)
+```
+
+### Interpretación:
+
+La probabilidad calculada mediante Poisson aproxima la obtenida con la distribución Binomial. Si la diferencia entre ambas es pequeña, la aproximación puede considerarse adecuada para este problema.
+
+------------------------------------------------------------------------
+
+## Ejercicio 20.c:
+
+Realice una simulación en R con 100 000 réplicas y set.seed(2026), empleando tanto la distribución exacta como la aproximación de Poisson.
+
+Compare los tres resultados (exacto, aproximación y simulación) en una tabla.
+
+### Código en R
+
+```{r}
+# Parámetros
+n <- 500
+p <- 0.02
+lambda <- n * p
+n_replicas <- 100000
+
+# Fijar semilla
+set.seed(2026)
+
+# ---------------------------------------------------------
+# Probabilidad exacta (Binomial)
+# ---------------------------------------------------------
+
+prob_exacta <- pbinom(q = 5,
+                      size = n,
+                      prob = p)
+
+# ---------------------------------------------------------
+# Aproximación mediante Poisson
+# ---------------------------------------------------------
+
+prob_poisson <- ppois(q = 5,
+                      lambda = lambda)
+
+# ---------------------------------------------------------
+# Simulación Binomial
+# ---------------------------------------------------------
+
+sim_binomial <- rbinom(n = n_replicas,
+                       size = n,
+                       prob = p)
+
+prob_simulada_binomial <- mean(sim_binomial <= 5)
+
+# ---------------------------------------------------------
+# Simulación Poisson
+# ---------------------------------------------------------
+
+sim_poisson <- rpois(n = n_replicas,
+                     lambda = lambda)
+
+prob_simulada_poisson <- mean(sim_poisson <= 5)
+
+# ---------------------------------------------------------
+# Tabla comparativa
+# ---------------------------------------------------------
+
+resultados <- data.frame(
+  Metodo = c("Exacta (Binomial)",
+             "Aprox. Poisson",
+             "Simulación Binomial",
+             "Simulación Poisson"),
+  Probabilidad = round(c(prob_exacta,
+                         prob_poisson,
+                         prob_simulada_binomial,
+                         prob_simulada_poisson), 6)
+)
+
+resultados
+```
+
+### Interpretación:
+
+La simulación Binomial debe aproximarse a la probabilidad exacta, mientras que la simulación de Poisson debe aproximarse a la probabilidad obtenida mediante la aproximación de Poisson.
+
+Si las cuatro probabilidades son muy similares, puede concluirse que la aproximación de Poisson es adecuada para este problema.
+
+------------------------------------------------------------------------
+
+## Ejercicio 20.d:
+
+En una hora reciente se registraron 15 rechazos.
+
+Calcule la probabilidad de observar 15 o más rechazos:
+
+1.  Bajo la tasa nominal p = 0.02.
+2.  Bajo una tasa alternativa p = 0.03.
+
+Discuta cuál de las dos hipótesis es más compatible con la observación.
+
+### Distribución:
+
+**Binomial (aproximación mediante Poisson)**
+
+### Justificación:
+
+El número de rechazos sigue exactamente una distribución Binomial, ya que existen 500 solicitudes independientes y cada una tiene una probabilidad constante de ser rechazada
+
+También puede aproximarse mediante Poisson, pero como el enunciado no lo solicita explícitamente, se utilizará la distribución exacta.
+
+### Código en R
+
+```{r}
+# ---------------------------------------------------------
+# Hipótesis 1: tasa nominal
+# ---------------------------------------------------------
+
+# Parámetros:
+# n = 500
+# p = 0.02
+
+# Variable aleatoria:
+# X ~ Binomial(n = 500, p = 0.02)
+
+# Probabilidad solicitada:
+# P(X ≥ 15)
+
+prob_nominal <- 1 - pbinom(q = 14,
+                           size = 500,
+                           prob = 0.02)
+
+# ---------------------------------------------------------
+# Hipótesis 2: tasa alternativa
+# ---------------------------------------------------------
+
+# Parámetros:
+# n = 500
+# p = 0.03
+
+# Variable aleatoria:
+# X ~ Binomial(n = 500, p = 0.03)
+
+# Probabilidad solicitada:
+# P(X ≥ 15)
+
+prob_alternativa <- 1 - pbinom(q = 14,
+                               size = 500,
+                               prob = 0.03)
+
+# Mostrar resultados
+prob_nominal
+prob_alternativa
+
+# Tabla comparativa
+resultados <- data.frame(
+  Hipotesis = c("p = 0.02",
+                "p = 0.03"),
+  Probabilidad = round(c(prob_nominal,
+                         prob_alternativa), 6)
+)
+
+resultados
+```
+
+### Interpretación:
+
+Si la probabilidad bajo una hipótesis es mayor, significa que observar 15 o más rechazos es más compatible con esa hipótesis.
+
+La hipótesis cuya probabilidad sea más alta explica mejor la observación realizada.

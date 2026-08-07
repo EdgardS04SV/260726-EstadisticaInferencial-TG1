@@ -62,7 +62,7 @@ prob_conjunta
 
 ### Interpretación:
 
-El resultado representa la probabilidad de que, durante una misma hora, lleguen exactamente 3 tickets a la cola A y exactamente 8 tickets a la cola B de forma simultánea. \*\*\* \## Ejercicio 19.b:
+El resultado representa la probabilidad de que, durante una misma hora, lleguen exactamente 3 tickets a la cola A y exactamente 8 tickets a la cola B de forma simultánea. 
 
 ------------------------------------------------------------------------
 
