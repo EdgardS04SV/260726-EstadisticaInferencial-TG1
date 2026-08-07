@@ -1,0 +1,345 @@
+---
+title: "Guía Unidad 1 (Ejercicios 13 al 16)"
+subtitle: "Resolución de los ejercicios 13 al 16"
+author: "Dereck Méndez"
+date: "2026-08-07"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    number_sections: true
+    theme: cosmo
+---
+
+## Declaración sobre el uso de Inteligencia Artificial
+
+Para la elaboración del presente informe se utilizó ChatGPT (OpenAI GPT-5.5) como herramienta de apoyo para:
+
+- revisar el procedimiento estadístico;
+- generar ejemplos de código en R;
+- mejorar la redacción del informe;
+- verificar la interpretación de los resultados.
+
+Todo el código fue revisado, ejecutado y validado por el estudiante en RStudio.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  warning = FALSE,
+  message = FALSE
+)
+```
+
+```{r}
+library(knitr)
+```
+
+# **Problema 13.** Contactación hasta lograr entrevistas
+
+Un reclutador contacta candidatos hasta lograr cinco entrevistas concretadas. La proporción histórica de candidatos que aceptan una entrevista al ser contactados es del $22\%$.
+
+(a) Calcule la probabilidad de que se logren las cinco entrevistas contactando exactamente a veinte personas.
+(b) Determine el número esperado de contactos requeridos.
+(c) El reclutador dispone de tiempo para contactar a un máximo de veinticinco personas. Calcule la probabilidad de que no logre las cinco entrevistas dentro de ese límite.
+
+## Justificación del modelo
+
+En este ejercicio el número de intentos no está fijado previamente. Lo que permanece fijo es el número de éxitos que son cinco entrevistas.
+
+Cada contacto representa un ensayo de Bernoulli independiente con éxito = acepta la entrevista y fracaso = rechaza la entrevista con probabilidad constante $p = 0.22$
+
+Por lo tanto, la variable aleatoria sigue una **Distribución Binomial Negativa**, la cual modela el número de ensayos necesarios para obtener un número fijo de éxitos.
+
+```{r parametros-problema13}
+r <- 5     # Número de entrevistas
+p <- 0.22  # Probabilidad de aceptación
+```
+
+### Inciso (a)
+
+```{r inciso-13a}
+x <- 20
+
+fracasos <- x - r
+
+prob_a <- dnbinom(fracasos, size = r, prob = p)
+
+prob_a
+
+round(prob_a, 4)
+```
+
+La probabilidad de concretar exactamente cinco entrevistas luego de contactar veinte candidatos es de **0.0481**, equivalente al **0.48 %**.
+
+### Inciso (b)
+
+```{r inciso-13b}
+esperanza <- r / p
+
+esperanza
+
+round(esperanza, 4)
+```
+
+En promedio, el reclutador deberá contactar aproximadamente **22** candidatos para lograr concretar cinco entrevistas.
+
+### Inciso (c)
+
+```{r inciso-13c}
+limite <- 25
+
+fracasos_limite <- limite-r
+
+prob_c <- 1 - pnbinom(fracasos_limite, size = r, prob = p)
+
+prob_c
+
+round(prob_c, 4)
+```
+
+La probabilidad de no conseguir cinco entrevistas luego de contactar como máximo a veinticinco personas es de **0.3281**.
+
+En otras palabras, existe aproximadamente un **3.28 %** de probabilidad de que el reclutador necesite contactar a más de veinticinco personas para alcanzar su objetivo.
+
+## Conclusión del problema
+
+La distribución Binomial Negativa resulta adecuada porque el experimento consiste en realizar contactos independientes hasta alcanzar un número fijo de entrevistas aceptadas. Los resultados obtenidos permiten estimar tanto la probabilidad de alcanzar la meta en un número específico de contactos como el número promedio esperado de contactos y el riesgo de no lograr el objetivo dentro del límite establecido.
+
+# **Problema 14.** Detección de sobredisperción y elección de modelo
+
+Un estudio piloto sobre el número de defectos por lote en una línea de producción arroja media muestral igual a cinco defectos y varianza muestral igual a doce defectos. Un ingeniero propone modelar la variable mediante Poisson($\lambda = 5$); otro propone la distribución binomial negativa con media cinco y varianza doce.
+
+(a) Justifique, mediante la comparación entre media y varianza, por qué la distribución de Poisson resulta inadecuada.
+(b) Bajo la parametrización de R para la binomial negativa (`mu` y `size`, donde $Var(X) = \mu+\mu^2/size$), determine el valor de `size` correspondiente a la media y la varianza observadas.
+(c) Calcule $P(X=8)$ y $P(X>=10)$ bajo el modelo binomial negativa y bajo el modelo de Poisson. Comente la magnitud del error de emplear Poisson cuando el proceso presenta sobredispersión.
+
+## Justificación del modelo
+
+Sea $X$ el número de defectos por lote. En una distribución de Poisson se cumple que: $E(X)=\lambda$ y $Var(X)=\lambda$.
+
+Por tanto, la media y la varianza deben ser aproximadamente iguales.
+
+En este problema se observa que la media es igual a 5 y la varianza es igual a 12.
+
+Como la varianza es considerablemente mayor que la media, existe sobredispersión, por lo que el modelo de Poisson no representa adecuadamente el comportamiento de los datos.
+
+En consecuencia, resulta más apropiado utilizar una distribución Binomial Negativa.
+
+```{r parametros-problema14}
+mu <- 5
+varianza <- 12
+```
+
+### Inciso (a)
+
+Poisson exige que $E(X)=Var(X)$ y aquí $12\neq5$, por lo tanto existe sobredispersión.
+
+### Inciso (b)
+
+```{r inciso-14b}
+size <- mu^2 / (varianza - mu)
+
+size
+
+round(size, 4)
+```
+
+### Inciso (c)
+
+$$P(X=8)$$
+
+```{r p8-binomial-negativa}
+prob_nb_8 <- dnbinom(8, mu = mu, size = size)
+
+round(prob_nb_8, 4)
+```
+
+```{r p8-poisson}
+prob_pois_8 <- dpois(8, lambda = mu)
+
+round(prob_pois_8, 4)
+```
+
+$$P(X>=10)$$
+
+```{r p10-binomial-negativa}
+prob_nb_10 <- 1 - pnbinom(9, mu = mu, size = size)
+
+round(prob_nb_10, 4)
+```
+
+```{r p10-poisson}
+prob_pois_10 <- 1 - dpois(9, lambda = mu)
+
+round(prob_pois_10, 4)
+```
+
+## Conclusión del problema
+
+Los resultados muestran diferencias entre ambos modelos debido a la sobredispersión presente en los datos.
+
+Mientras que la distribución de Poisson asume igualdad entre media y varianza, la distribución Binomial Negativa incorpora un parámetro adicional que permite modelar una variabilidad mayor.
+
+Por esta razón, la Binomial Negativa proporciona una representación más realista del proceso cuando la varianza supera a la media.
+
+# **BLOQUE E - Distribución hipergeométrica**
+
+# **Problema 15.** Auditoría de un lote de servidores
+
+Un lote de treinta servidores contiene cinco con fallas de firmware. Un auditor selecciona ocho al azar, sin reemplazo, para inspección.
+
+(a) Calcule la probabilidad de que ninguno de los servidores seleccionados presente falla.
+(b) Calcule la probabilidad de que al menos uno presente falla.
+(c) Calcule la probabilidad de que exactamente dos presenten falla.
+(d) Determine el número esperado de servidores con falla en la muestra.
+
+## Justificación del modelo
+
+Sea $X$ el número de servidores con fallas encontrados en la muestra.
+
+La selección se realiza sin reemplazo desde una población finita, por lo que la probabilidad de seleccionar un servidor defectuoso cambia en cada extracción.
+
+Debido a estas características, el modelo adecuado es la **Distribución Hipergeométrica**.}
+
+```{r parametros-problema15}
+N <- 30 # Tamaño de la población
+K <- 5  # Servidores con fallas
+n <- 8  # Tamaño de la muestra
+```
+
+### Inciso (a)
+
+```{r inciso15a}
+prob_a <- dhyper(x = 0, m = K, n = N - K, k = n)
+
+round(prob_a, 4)
+```
+
+La probabilidad de que ninguno de los ocho servidores seleccionados presente fallas es de **0.1848**.
+
+Esto significa que existe aproximadamente un **1.84 %** de probabilidad de que la muestra esté compuesta únicamente por servidores sin fallas.
+
+### Inciso (b)
+
+```{r inciso15b}
+prob_b <- 1 - prob_a
+
+round(prob_b, 4)
+```
+
+La probabilidad de encontrar al menos un servidor con fallas durante la auditoría es de **0.8152**.
+
+Este resultado representa la posibilidad de detectar una o más fallas en la muestra inspeccionada.
+
+### Inciso (c)
+
+```{r inciso15c}
+prob_c <- dhyper(x = 2, m = K, n = N - K, k = n)
+
+round(prob_c, 4)
+```
+
+La probabilidad de seleccionar exactamente dos servidores con fallas es de **0.3026**.
+
+Este resultado cuantifica la posibilidad de observar dos equipos defectuosos en la muestra de ocho servidores.
+
+### Inciso (d)
+
+```{r inciso15d}
+esperanza <- n * (K / N)
+
+esperanza
+
+round(esperanza,2)
+```
+
+En promedio, se espera encontrar aproximadamente **1.33** servidores con fallas dentro de una muestra de ocho servidores.
+
+## Conclusión del problema
+
+La distribución Hipergeométrica es el modelo apropiado porque el muestreo se realiza sin reemplazo sobre una población finita. Los resultados permiten estimar la probabilidad de detectar servidores con fallas durante una auditoría y el número esperado de equipos defectuosos en la muestra seleccionada.
+
+# **Problema 16.** Aproximación de la hipergeométrica por la binomial
+
+Una encuesta selecciona a treinta personas al azar, sin reemplazo, de una empresa con ochocientos
+empleados, de los cuales doscientos son mujeres. Sea $X$ el número de mujeres seleccionadas en la
+muestra.
+
+(a) Calcule $P(X = 8)$ mediante la distribución hipergeométrica exacta.
+(b) Calcule la misma probabilidad empleando la aproximación por la distribución binomial con $p$ igual
+a la proporción poblacional de mujeres.
+(c) Compare ambos resultados, cuantifique la diferencia y discuta la aceptabilidad de la aproximación
+en función del cociente $n/N$.
+
+## Justificación del modelo
+
+La selección de empleados se realiza sin reemplazo, por lo que el modelo exacto corresponde a una **Distribución Hipergeométrica**.
+
+Sin embargo, cuando la población es mucho mayor que la muestra, el efecto del muestreo sin reemplazo es muy pequeño. En estos casos, la distribución Hipergeométrica puede aproximarse mediante una **Distribución Binomial**, utilizando como probabilidad de éxito la proporción poblacional.
+
+En este ejercicio se compararán ambos modelos para evaluar la precisión de dicha aproximación.
+
+```{r parametros-problema16}
+N <- 800   # Población total
+K <- 200   # Mujeres
+n <- 30    # Tamaño de muestra
+p <- K / N # Probabilidad poblacional
+```
+
+### Inciso (a)
+
+```{r inciso16a}
+prob_hiper <- dhyper(x = 8, m = K, n = N - K, k = n)
+
+round(prob_hiper, 4)
+```
+
+La probabilidad de seleccionar exactamente ocho mujeres en una muestra de treinta empleados, utilizando la distribución Hipergeométrica, es de **0.1624**.
+
+### Inciso (b)
+
+```{r inciso 16b}
+prob_binomial <- dbinom(x = 8, size = n, prob = p)
+
+round(prob_binomial, 4)
+```
+
+La aproximación mediante la distribución Binomial estima una probabilidad de **0.1593** para seleccionar exactamente ocho mujeres.
+
+### Inciso (c)
+
+```{r inciso16c}
+diferencia <- abs(prob_hiper - prob_binomial)
+
+diferencia
+
+round(diferencia, 6)
+```
+
+```{r razon}
+razon <- n / N
+
+razon
+
+round(razon, 4)
+```
+
+## Interpretación final
+
+La diferencia entre ambas probabilidades es muy pequeña.
+
+Además,
+
+$$
+\frac{n}{N}=0.0375
+$$
+
+es decir, únicamente se está seleccionando el **3.75 %** de la población.
+
+Como este porcentaje es considerablemente menor al 5 %, la extracción sin reemplazo tiene un efecto muy reducido sobre las probabilidades.
+
+Por esta razón, la aproximación mediante la distribución Binomial resulta adecuada para este problema y produce resultados muy cercanos a los obtenidos con la distribución Hipergeométrica exacta.
+
+## Conclusión del problema
+
+La distribución Hipergeométrica representa el modelo exacto cuando el muestreo se realiza sin reemplazo sobre una población finita. Sin embargo, cuando el tamaño de la muestra es pequeño respecto al tamaño de la población, como ocurre en este problema, la distribución Binomial constituye una excelente aproximación, simplificando los cálculos sin introducir errores significativos.
