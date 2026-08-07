@@ -80,9 +80,7 @@ Variable aleatoria:
 
 X = Número de devoluciones durante un trimestre. X \~ Poisson(λ = 7.5)
 
-donde: 
--λ mensual = 2.5 devoluciones/mes 
--λ trimestral = 2.5 × 3 = 7.5 devoluciones/trimestre
+donde: -λ mensual = 2.5 devoluciones/mes -λ trimestral = 2.5 × 3 = 7.5 devoluciones/trimestre
 
 ### Probabilidad solicitada:
 
@@ -97,15 +95,15 @@ dpois(x, lambda)
 ### Código en R
 
 ```{r}
-dpois(x = 6,
-      lambda = 7.5)
+dpois(x = 6,lambda = 7.5)
 ```
 
 ### Interpretación:
 
 El resultado representa la probabilidad de que durante un trimestre se registren exactamente 6 devoluciones, sabiendo que el promedio esperado es de 7.5 devoluciones por trimestre.
 
----
+------------------------------------------------------------------------
+
 ## Ejercicio 17.c:
 
 Un desarrollador arregla en promedio el 30 % de los reportes de errores al primer intento. Los intentos se prolongan hasta lograr arreglar el segundo reporte. Calcule la probabilidad de que se requieran exactamente 6 intentos.
@@ -120,8 +118,7 @@ Se utiliza una distribución Binomial Negativa porque cada intento tiene dos pos
 
 Variable aleatoria:
 
-X = Número total de intentos necesarios para lograr el segundo reporte arreglado.
-X ~ Binomial Negativa(r = 2, p = 0.30)
+X = Número total de intentos necesarios para lograr el segundo reporte arreglado. X \~ Binomial Negativa(r = 2, p = 0.30)
 
 ### Probabilidad solicitada:
 
@@ -131,9 +128,7 @@ P(X = 6)
 
 dnbinom(x, size, prob)
 
--x    = número de fracasos antes del último éxito.
--size = número de éxitos requeridos.
--prob = probabilidad de éxito.
+-x = número de fracasos antes del último éxito. -size = número de éxitos requeridos. -prob = probabilidad de éxito.
 
 ### Código en R
 
@@ -147,7 +142,8 @@ dnbinom(x = 4,
 
 El resultado representa la probabilidad de que el desarrollador necesite exactamente 6 intentos para conseguir arreglar exitosamente el segundo reporte.
 
----
+------------------------------------------------------------------------
+
 ## Ejercicio 17.d:
 
 De un grupo de 12 estudiantes, el 25 % obtiene históricamente calificación de honor. Calcule la probabilidad de que este ciclo al menos 4 estudiantes obtengan dicha calificación.
@@ -162,8 +158,7 @@ Se utiliza una distribución Binomial porque existe un número fijo de ensayos (
 
 Variable aleatoria:
 
-X = Número de estudiantes que obtienen calificación de honor.
-X ~ Binomial(n = 12, p = 0.25)
+X = Número de estudiantes que obtienen calificación de honor. X \~ Binomial(n = 12, p = 0.25)
 
 ### Probabilidad solicitada:
 
@@ -173,8 +168,7 @@ P(X ≥ 4)
 
 pbinom(x, size, prob)
 
-pbinom() calcula probabilidades acumuladas P(X ≤ x).
-Para probabilidades del tipo "al menos", se utiliza el complemento.
+pbinom() calcula probabilidades acumuladas P(X ≤ x). Para probabilidades del tipo "al menos", se utiliza el complemento.
 
 ### Código en R
 

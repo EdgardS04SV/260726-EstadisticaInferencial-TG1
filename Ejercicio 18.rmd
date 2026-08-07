@@ -1,0 +1,151 @@
+---
+title: "Ejercicio 18"
+author: "Edgard Granados"
+date: "2026-08-07"
+output:
+  pdf_document:
+    latex_engine: xelatex
+---
+
+# Ejercicio 18
+
+## Ejercicio 18.a:
+
+El proveedor de un producto electrónico ha establecido contractualmente que la tasa de fallas durante el primer año de uso no supera el 0.5 %. Una tienda vende 400 unidades durante ese año.
+
+Calcule la probabilidad de observar más de 5 fallas.
+
+### Distribución:
+
+**Poisson**
+
+### Justificación:
+
+Originalmente el número de fallas sigue una distribución Binomial, ya que existe un número fijo de unidades vendidas (n = 400), cada unidad puede fallar o no y la probabilidad de falla es constante (p = 0.005).
+
+### Código en R
+
+```{r}
+1 - pbinom(q = 5,
+           size = 400,
+           prob = 0.005)
+```
+
+### Interpretación:
+
+El resultado representa la probabilidad de que más de cinco de las 400 unidades vendidas fallen durante su primer año de uso, suponiendo que la tasa de fallas es del 0.5 %.
+
+------------------------------------------------------------------------
+
+## Ejercicio 18.b:
+
+Justifique si resulta aceptable emplear la distribución de Poisson como aproximación y compare numéricamente ambos resultados.
+
+### Justificación:
+
+Sí es aceptable utilizar la distribución de Poisson como aproximación de la Binomial porque: -El número de ensayos es grande: n = 400. -La probabilidad de éxito (falla) es pequeña: p = 0.005. -El producto λ = np = 400 × 0.005 = 2 es pequeño.
+
+Estas condiciones hacen que la distribución Binomial sea muy bien aproximada por una Poisson.
+
+### Código en R
+
+```{r}
+# Probabilidad exacta (Binomial)
+prob_binomial <- 1 - pbinom(q = 5,
+                            size = 400,
+                            prob = 0.005)
+
+# Probabilidad aproximada (Poisson)
+
+prob_poisson <- 1 - ppois(q = 5,lambda = 2)
+
+# Mostrar resultados
+prob_binomial
+prob_poisson
+
+# Diferencia absoluta entre ambos resultados
+abs(prob_binomial - prob_poisson)
+```
+
+### Interpretación:
+
+Si la diferencia entre ambas probabilidades es muy pequeña, puede concluirse que la aproximación de Poisson es adecuada para este problema.
+
+------------------------------------------------------------------------
+
+## Ejercicio 18.c:
+
+Se observaron 6 fallas efectivas durante el año.
+
+Calcule la probabilidad de observar 6 o más fallas: 1. Bajo el supuesto contractual (p = 0.005). 2. Bajo el supuesto alternativo (p = 0.01).
+
+Discuta si la evidencia observada respalda una revisión del contrato.
+
+### Distribución:
+
+**Binomial (aproximación mediante Poisson)**
+
+### Justificación:
+
+El número de fallas puede modelarse exactamente mediante una distribución Binomial. Sin embargo, debido a que n = 400 es grande y p es pequeño, también puede emplearse la aproximación de Poisson.
+
+### Código en R
+
+```{r}
+# ---------------------------------------------------------
+# Supuesto contractual
+# ---------------------------------------------------------
+
+# Parámetros:
+# n = 400
+# p = 0.005
+# λ = n × p = 2
+
+# Probabilidad solicitada:
+# P(X ≥ 6)
+
+# Solución exacta (Binomial)
+prob_binomial_005 <- 1 - pbinom(q = 5,
+                                size = 400,
+                                prob = 0.005)
+
+# Aproximación mediante Poisson
+prob_poisson_005 <- 1 - ppois(q = 5,
+                              lambda = 2)
+
+# ---------------------------------------------------------
+# Supuesto alternativo
+# ---------------------------------------------------------
+
+# Parámetros:
+# n = 400
+# p = 0.01
+# λ = n × p = 4
+
+# Probabilidad solicitada:
+# P(X ≥ 6)
+
+# Solución exacta (Binomial)
+prob_binomial_001 <- 1 - pbinom(q = 5,
+                                size = 400,
+                                prob = 0.01)
+
+# Aproximación mediante Poisson
+prob_poisson_001 <- 1 - ppois(q = 5,
+                              lambda = 4)
+
+# Mostrar resultados
+prob_binomial_005
+prob_poisson_005
+
+prob_binomial_001
+prob_poisson_001
+```
+
+### Interpretación:
+
+Bajo el supuesto contractual (p = 0.005), observar seis o más fallas tiene una probabilidad relativamente baja, por lo que sería un evento poco frecuente.
+
+Bajo el supuesto alternativo (p = 0.01), observar seis o más fallas es considerablemente más probable.
+
+Si la probabilidad bajo el supuesto contractual es muy pequeña y la observación real fue de seis fallas, la evidencia sugiere que la tasa de fallas podría ser mayor a la establecida en el contrato, lo que justificaría revisar dicho supuesto o realizar un análisis estadístico más formal (por ejemplo, una prueba de hipótesis).
