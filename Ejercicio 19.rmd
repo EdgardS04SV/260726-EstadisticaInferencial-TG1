@@ -1,0 +1,170 @@
+---
+title: "Ejercicio 19"
+author: "Edgard Granados"
+date: "2026-08-07"
+output:
+  pdf_document:
+    latex_engine: xelatex
+---
+
+# Ejercicio 19
+
+## Ejercicio 19.a:
+
+Un sistema de tickets recibe dos flujos independientes:
+
+-Cola A (prioridad alta): promedio de 4 tickets por hora. -Cola B (prioridad baja): promedio de 6 tickets por hora.
+
+Calcule la probabilidad de que en una hora lleguen exactamente 3 tickets a la cola A y exactamente 8 tickets a la cola B.
+
+### Distribución:
+
+**Poisson**
+
+### Justificación:
+
+Cada cola representa un proceso independiente de llegada de eventos (tickets) durante un intervalo fijo de tiempo (1 hora), con una tasa promedio conocida y constante.Por ello, el número de tickets en cada cola sigue una distribución de Poisson.
+
+### Variables aleatorias:
+
+-A = Número de tickets de prioridad alta. -A \~ Poisson(λ = 4)
+
+-B = Número de tickets de prioridad baja. -B \~ Poisson(λ = 6)
+
+### Probabilidad solicitada:
+
+P(A = 3 y B = 8)
+
+###Funciones utilizadas:
+
+dpois(): Probabilidad puntual de una distribución Poisson.
+
+Como A y B son independientes:
+
+-P(A = 3 y B = 8) = -P(A = 3) × P(B = 8)
+
+### Código en R
+
+```{r}
+prob_A <- dpois(x = 3,
+                lambda = 4)
+
+prob_B <- dpois(x = 8,
+                lambda = 6)
+
+prob_conjunta <- prob_A * prob_B
+
+# Mostrar resultados
+prob_A
+prob_B
+prob_conjunta
+```
+
+### Interpretación:
+
+El resultado representa la probabilidad de que, durante una misma hora, lleguen exactamente 3 tickets a la cola A y exactamente 8 tickets a la cola B de forma simultánea. \*\*\* \## Ejercicio 19.b:
+
+------------------------------------------------------------------------
+
+## Ejercicio 19.b:
+
+Un ticket de la fila B llega a las 10:15 a.m. Calcule la probabilidad de que entre las 10:15 y las 10:45 a.m. lleguen al menos 2 tickets a la fila A, situación en la cual el ticket de B verá extendida su espera.
+
+### Distribución:
+
+**Poisson**
+
+### Justificación:
+
+Se utiliza una distribución de Poisson porque se desea modelar el número de llegadas de tickets durante un intervalo fijo de tiempo (30 minutos), con una tasa promedio conocida y suponiendo que las llegadas son independientes.
+
+### Variables aleatorias:
+
+X = Número de tickets que llegan a la fila A entre las 10:15 y las 10:45 a.m. La tasa de llegada es: λ = 4 tickets/hora
+
+Como el intervalo es de media hora: λ = 4 × (30/60) = 2 tickets
+
+X \~ Poisson(λ = 2)
+
+### Probabilidad solicitada:
+
+P(X ≥ 2)
+
+###Funciones utilizadas:
+
+dpois(): Probabilidad puntual de una distribución Poisson.
+
+ppois(x, lambda)
+
+Como ppois() calcula P(X ≤ x), para obtener P(X ≥ 2) utilizamos el complemento: P(X ≥ 2) = 1 - P(X ≤ 1)
+
+### Código en R
+
+```{r}
+1 - ppois(q = 1,
+          lambda = 2)
+
+# Código equivalente
+ppois(q = 1,
+      lambda = 2,
+      lower.tail = FALSE)
+```
+
+### Interpretación:
+
+El resultado representa la probabilidad de que, durante los 30 minutos posteriores a la llegada del ticket de prioridad baja, ingresen al menos dos nuevos tickets de prioridad alta, ocasionando que el ticket de la fila B deba esperar más tiempo antes de ser atendido.
+
+------------------------------------------------------------------------
+
+## Ejercicio 19.c:
+
+Verifique el resultado del inciso (b) mediante una simulación en R con al menos 100 000 réplicas, empleando set.seed(2026).
+
+Compare la frecuencia relativa simulada con el valor teórico y comente.
+
+### Distribución:
+
+**Poisson**
+
+### Justificación:
+
+En el inciso (b) se determinó que el número de tickets que llegan a la fila A durante 30 minutos sigue:
+
+X \~ Poisson(λ = 2)
+
+La simulación permitirá aproximar la probabilidad P(X ≥ 2) mediante frecuencias relativas.
+
+### Código en R
+
+```{r}
+# Parámetros
+lambda <- 2
+n_replicas <- 100000
+
+# Fijar semilla para obtener resultados reproducibles
+set.seed(2026)
+
+# Simulación de 100 000 observaciones de una Poisson(2)
+simulacion <- rpois(n = n_replicas,
+                    lambda = lambda)
+
+# Frecuencia relativa simulada de X ≥ 2
+prob_simulada <- mean(simulacion >= 2)
+
+# Probabilidad teórica
+prob_teorica <- 1 - ppois(q = 1,
+                          lambda = lambda)
+
+# Mostrar resultados
+prob_teorica
+prob_simulada
+
+# Diferencia absoluta
+abs(prob_teorica - prob_simulada)
+```
+
+### Interpretación:
+
+La probabilidad simulada debe ser muy cercana a la probabilidad teórica. Las pequeñas diferencias se deben al azar inherente al proceso de simulación.
+
+A medida que aumenta el número de réplicas, la frecuencia relativa converge hacia la probabilidad teórica (Ley de los Grandes Números).
