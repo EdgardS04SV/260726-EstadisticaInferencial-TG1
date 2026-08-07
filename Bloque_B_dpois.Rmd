@@ -4,6 +4,21 @@ Una carretera urbana registra en promedio 2.3 accidentes por semana.
 
 (a) Calcule la probabilidad de que ocurran exactamente cinco accidentes en un período de dos semanas.
 
+### Planteamiento.
+Definiciones:
+Variable aleatoria (x) número de accidentes en un periodo de 2 semanas.
+
+Tasa promedio planteada: 2.3 accidentes / semana (lambda_s).
+
+Tasa ajustada: Se escala a lo correspondiente a 2 semanas (lambda_t).
+
+Número de éxitos deseados: Que ocurran 5 accidentes (k).
+
+$\lambda = 4.6$, $P(X = 5)$
+
+### Justificación.
+Ya que se trata de un evento estudiado en 2 semanas la tasa promedio se escala a las 2 semanas correspondientes. Luego se procede al cálculo de la distribución de Poisson usando la tasa promedio calculada y el número de éxitos planteados.
+
 ```{r}
 lambda_s <- 2.3
 semanas <- 2
@@ -14,43 +29,86 @@ print(prob * 100)
 ```
 
 
-
-
-La Probabilidad de que ocurran 5 accidentes en el período de 2 semanas es de 17.25255 %
+La Probabilidad de que ocurran 5 accidentes en el período de 2 semanas es de 17.2525 %
 
 (b)  Calcule la probabilidad de que ocurra al menos un accidente en un día cualquiera.
+
+### Planteamiento.
+Tasa promedio: 2.3 accidentes por semana.
+
+Cálculo de la tasa promedio diaria: $\lambda_d = 2.3/7$
+
+Cálculo del evento complementario: $P(X \ge 1) = 1 - P(X = 0)$
+### justificación
+Para este caso calculamos la tasa promedio diaria a partir de la tasa de accidentes por semana. Con eso podemos obtener la probabilidad que ocurran 0 accidentes en 1 día. Posteriormente usando la regla del evento complementario obtenemos la probabilidad de que ocurra al menos 1 accidente en 1 día.
 
 ```{r}
 lambda_s <- 2.3
 dias_semana <- 7
-lambda_t <- lambda_s / dias_semana
+lambda_d <- lambda_s / dias_semana
 k <- 0
-prob <- 1 - dpois(x = k, lambda = lambda_t)
+prob <- 1 - dpois(x = k, lambda = lambda_d)
 print(prob * 100)
 ```
-
 
 
 La probabilidad de que en un día ocurra al menos un accidente en esa carretera 28.00485%.
 
-(c)  Calcule la probabilidad de que en un mes de treinta días ocurran menos de ocho accidentes
+(c)  Calcule la probabilidad de que en un mes de treinta días ocurran menos de ocho accidentes.
+
+### Planteamiento.
+Variable aleatoria: Número de accidentes en un periodo de 30 días (x).
+
+Ajuste de tasa promedio: Calculamos la tasa diaria a partir del dato brindado, luego escalamos la tasa diaria a 30 días.
+
+$\lambda_{mes} = \left(\frac{2.3}{7}\right) \times 30$
+
+Evento de éxito: Menos de 8 accidentes, lo que significa que pueden ocurrir desde 0 a 7, lo que se plantea así:
+
+$P(X \le 7)$
+
+### Justificación.
+Debemos calcular la probabilidad acumulada de los eventos desde 0 a 7 usando la tasa promedio correspondiente a 30 días donde los eventos de éxito son los iguales o menores a 7. Para este caso usaremos el prefijo p para ese fin.
 
 ```{r}
 lambda_s <- 2.3
 dias_mes <- 30
-lambda_t <- (lambda_s / 7) * dias_mes
+lambda_mes <- (lambda_s / 7) * dias_mes
 q <- 7
-prob <- ppois(q = q, lambda = lambda_t)
+prob <- ppois(q = q, lambda = lambda_mes)
 print(prob * 100)
 ```
 
 
-La probabilidad que en un mes de 30 días ocurran menos de 8 accidentes es de 23.33657% en esa carretera.
+La probabilidad que en un mes de 30 días ocurran menos de 8 accidentes es de 23.3366% en esa carretera.
 
 ## Problema 6. Dimensionamiento de un centro de llamadas
 Un centro de llamadas recibe en promedio quince llamadas por hora. Cada agente puede atender hasta cuatro llamadas por hora sin que se produzca saturación del sistema.
 
 (a) Con tres agentes disponibles, calcule la probabilidad de saturación durante una hora cualquiera.
+
+### Planteamiento.
+Variable aleatoria: Número de llamadas en 1 hora (x).
+
+Tasa promedio: 15 llamadas por hora
+
+Saturación: 4 llamadas por hora por agente.
+
+Capacidad: 3 agentes * 4 llamadas/hora/agente = 12 llamadas/hora
+
+Ocurre saturación cuando el número de llamadas supera la capacidad máxima de los agentes:
+
+($X \ge 13$)
+
+$P(X \ge 13)$
+
+$\lambda = 15$
+
+Evento complementario: se calculará la probabilidad de las cantidades de llamadas que no causan saturación para encontrar la probabilidad de saturación mediante la resta.
+
+$P(\text{Sat}) = P(X \ge 13) = 1 - P(X \le 12)$
+### Justificación.
+Calculamos la probabilidad de las cantidades que tienen límite, en este caso cuando no hay saturación, dado que los valores del otro evento no tienen límite. De esa forma se procede a usar la regla del evento complementario para obtener la probabilidad de saturación de 3 agentes en 1 hora.
 
 ```{r}
 lambda_a <- 15
@@ -67,6 +125,15 @@ La probabilidad que el centro de llamadas se sature a una hora cualquiera con tr
 
 (b) Determine el número mínimo de agentes que deben contratarse para que la probabilidad de saturación en una hora sea inferior al 5 %
 
+### Planteamiento
+No saturación: Queremos que la probabilidad que la demanda supere la capacidad sea menor al 5%. Es decir:
+
+$P(\text{Sat}) = P(X > C) < 0.05 \quad \implies \quad P(X \le C) \ge 0.95$
+
+Capacidad requerida: Como se evidencia podemos calcular la capacidad con el percentil 95 de la distribución de Poisson.
+### Justificación.
+Se calcularán las probabilidades acumuladas de $P(X \le C)$ para las capacidades dentro del percentil 95 de la distribución de Poisson donde $\lambda = 15$, lo que nos dará el número de llamadas que los agentes son capaces de atender con una probabilidad de saturación menor al 5%.
+
 ```{r}
 lambda_a <- 15
 capacidad_a <- 4
@@ -78,14 +145,26 @@ print(numero_agentes)
 ```
 
 
-
-Para reducir la saturación al 5%, tomamos el percentil 95 para calcular las llamadas que se pueden atender dentro del límite de saturación. Lo que corresponde a 22 llamadas por hora.
+Para reducir la saturación a menos del 5%, tomamos el percentil 95 para calcular las llamadas que se pueden atender dentro del límite de saturación. Lo que corresponde a 22 llamadas por hora.
 Luego se calcula cuantos agentes son necesarios para atender las 22 llamadas por hora. Lo que corresponde a 6 agentes.
 
 ## Problema 7. Procesos de Poisson simultáneos e independientes
 Un servidor de comercio electrónico recibe dos flujos independientes: solicitudes de compra con un promedio de ocho por minuto y solicitudes de consulta con un promedio de doce por minuto.
 
 (a) Calcule la probabilidad de que en un minuto lleguen exactamente veinticinco solicitudes en total. Justifique el modelo empleado invocando la propiedad aditiva de la distribución de Poisson.
+
+### Planteamiento.
+Caso éxito: Que en 1 minuto lleguen 25 solicitudes.
+
+Tasa promedio de compra: 8/minuto.
+
+Tasa promedio de consulta: 12/ minuto.
+
+Por lo que se plantea de la siguiente manera de acuerdo a la propiedad aditiva:
+
+$Y = X_1 + X_2 \sim \text{Pois}(\lambda_Y = \lambda_1 + \lambda_2)$
+### Justificación
+La propiedad aditiva establece que si $X_1$ y $X_2$ son variables aleatorias e independientes que siguen la distribución de Poisson con una tasa promedio, entonces la variable suma $Y = X_1 + X_2$, también sigue una distribución de Poisson con un parámetro $\lambda_y$ igual a la suma de sus tasas individuales. $\lambda_Y = \lambda_1 + \lambda_2 = 8 + 12 = 20 \text{ solicitudes}$
 
 ```{r}
 lambda_compras <- 8
@@ -96,13 +175,30 @@ prob <- dpois(x = k, lambda = lambda_total)
 print(prob * 100)
 ```
 
-
-La propiedad aditiva establece que si X_1 y X_2 son variables aleatorias e independientes que siguen la distribución de Poisson con una tasa promedio, entonces la variable suma Y = X_1 + X_2, también sigue una distribución de Poisson con un parámetro lambda_y igual a la suma de sus tasas individuales.
+La probabilidad que el servidor reciba 25 solicitudes de de 4.4588%
 
 (b)  Determine cuál de los siguientes eventos es más probable, y por cuánto:
-
     (i) recibir en un minuto exactamente diez solicitudes de compra y quince de consulta;
-    (ii) recibir veinticinco solicitudes en total, sin distinción de tipo. 
+    (ii) recibir veinticinco solicitudes en total, sin distinción de tipo.
+
+### Planteamiento.
+Tasa promedio de compras: 8 solicitudes/min.
+
+Tasa promedio de consultas: 12 solicitudes/min.
+
+Tasa promedio total: 20 solicitudes/min
+
+Evento 1: 10 compras, 15 consultas.
+
+Evento 2: Ocurrencia de 25 solicitudes.
+
+### Justificación.
+
+Al tratarse de eventos independientes la probabilidad de ambos es el producto de las probabilidades individuales.
+
+$P(\text{Evento i}) = P(X_1 = 10) \times P(X_2 = 15)$
+
+Evento 2: Ocurrencia de 25 solicitudes en total sin importar cómo se dividen entre compras y consultas. $P(Y = 25)$ Este resultado lo calculamos en el ejercicio anterior.
 
 ```{r}
 lambda_cmpr <- 8
@@ -118,12 +214,25 @@ print(prob_ii * 100)
 ```
 
 
+
+
 El evento (i) tiene un 0.7185654% de probabilidad de ocurrir, mientras que el evento (ii) tiene un 4.458765% de ocurrencia por lo que el evento (ii) es más probable.
 
 ## Problema 8. Cajero con demanda variable
 Un cajero atiende clientes durante una jornada de cinco horas. Entre las 11:00 y las 13:00 (periodode alta demanda) llegan en promedio ocho clientes por hora; entre las 13:00 y las 16:00 (demanda regular) llegan en promedio tres clientes por hora. Los flujos se modelan como procesos de Poisson independientes.
 
 (a) Calcule la probabilidad de que durante el periodo de alta demanda (dos horas completas) lleguen exactamente veinte clientes.
+
+### Planteamiento.
+Variable aleatoria: Número de clientes que llegan al cajero durante el período de alta demanda (x).
+Tasa promedio: La tasa en alta demanda es 8 clientes/hora.
+Ajuste de la tasa: escalamos tasa a 2 horas.
+
+$\lambda_{alta} = 8 \times 2 = 16 \text{ clientes en 2 horas}$
+
+Exito: Que lleguen exactamente 20 clientes.
+### Justificación.
+Para resolver este ejercicio sobre el cajero, analizaremos únicamente el intervalo de tiempo especificado dentro del período de alta demanda. En R usamos la función de probabilidad puntual ajustando previamente el valor de $\lambda$ al período de 2 horas
 
 ```{r}
 tasa_alta <- 8
@@ -134,10 +243,41 @@ prob_alta <- dpois(x = k, lambda = lambda_alta)
 print(prob_alta * 100)
 ```
 
+La probabilidad que durante el periodo de alta demanda lleguen 20 clientes en 2 horas es de 5.5920%
 
-La probabilidad que durante el periodo de alta demanda lleguen 20 clientes en 2 horas es de 5.591951%
 
 (b) Calcule la probabilidad de que lleguen al menos cinco clientes en la primera media hora del periodo de alta demanda y, simultáneamente, al menos tres clientes en la primera hora del periodo regular.
+
+### Planteamiento.
+Evento 1: Primera media hora de alta demanda.
+
+Intervalo: 0.5h (30 min).
+
+Tasa promedio en horario alto: 8 clientes/hora.
+
+Tasa ajustada: $\lambda_1 = 8 \times 0.5 = 4 \text{ clientes en 30 min}$
+
+Condición: Al menos 5 clientes $X_1 \ge 5$.
+
+Evento 2: Primera media hora del período regular.
+
+Intervalo: 1 hora.
+
+Tasa horaria regular: 3 clientes/hora.
+
+Tasa ajustada: $\lambda_2 = 3 \times 1 = 3 \text{ clientes en 1 hora}$
+
+Condición: Al menos 3 clientes ($X_2 \ge 3$).
+### justificación.
+Para resolver esta parte del ejercicio, aprovecharemos una propiedad fundamental: los procesos de Poisson en intervalos de tiempo no solapados se tratan como independientes. Debido a la independencia de los intervalos, la probabilidad conjunta de que ocurran ambos eventos simultáneamente es el producto de sus probabilidades individuales:
+
+$P(\text{Sim}) = P(X_1 \ge 5) \times P(X_2 \ge 3)$
+
+Calculamos cada probabilidad usando la regla del complemento:
+
+$P(X_1 \ge 5) = 1 - P(X_1 \le 4)$ con $\lambda_1 = 4$
+
+$P(X_2 \ge 3) = 1 - P(X_2 \le 2)$ con $\lambda_2 = 3$
 
 ```{r}
 #Evento 1: 30 min de alta demanda.
@@ -151,12 +291,11 @@ horas_baja <- 1
 lambda_baja <- tasa_baja * horas_baja
 k_baja <- 2
 # Probabilidades individuales
-prob_alta <- ppois(q = k_alta, lambda = lambda_alta, lower.tail = FALSE)
-prob_baja <- ppois(q = k_baja, lambda = lambda_baja, lower.tail = FALSE)
+prob_alta <- 1 - ppois(q = k_alta, lambda = lambda_alta)
+prob_baja <- 1 - ppois(q = k_baja, lambda = lambda_baja)
 # Probabilidad conjunta por independencia.
 prob_total <- prob_alta * prob_baja
 print(prob_total * 100)
 ```
 
-
-La probabilidad que al menos lleguen 5 clientes en la primera media hora del periodo de alta demanda y al menos 3 clientes en la primera hora de periodo regular es de 21.40905%
+La probabilidad que al menos lleguen 5 clientes en la primera media hora del periodo de alta demanda y al menos 3 clientes en la primera hora de periodo regular es de 21.4091%
