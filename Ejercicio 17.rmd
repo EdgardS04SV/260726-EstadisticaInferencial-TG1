@@ -1,0 +1,198 @@
+---
+title: "Ejercicio 17"
+author: "Edgard Granados"
+date: "2026-08-07"
+output:
+  pdf_document:
+    latex_engine: xelatex
+---
+
+# Ejercicio 17
+
+## Ejercicio 17.a:
+
+De un total de 300 usuarios activos en una plataforma, el 2 % son cuentas automatizadas (bots). Se extrae una muestra sin reemplazo de 40 usuarios. Calcule la probabilidad de que la muestra contenga exactamente 3 bots.
+
+### Distribución:
+
+**Hipergeométrica.**
+
+### Justificación:
+
+Se utiliza una distribución Hipergeométrica porque se selecciona una muestra SIN REEMPLAZO de una población finita. Al no reemplazar los usuarios seleccionados, la probabilidad de elegir un bot cambia en cada extracción, por lo que los ensayos no son independientes.
+
+Variable aleatoria:
+
+X = Número de bots encontrados en la muestra.
+
+X \~ Hipergeométrica(N = 300, K = 6, n = 40)
+
+donde:
+
+N = 300 -\> Tamaño de la población.
+
+K = 6 -\> Número de bots en la población (2 % de 300).
+
+n = 40 -\> Tamaño de la muestra.
+
+### Probabilidad solicitada:
+
+P(X = 3)
+
+### Función utilizada:
+
+dhyper(x, m, n, k)
+
+-x = número de éxitos deseados.
+
+-m = número de éxitos en la población.
+
+-n = número de fracasos en la población.
+
+-k = tamaño de la muestra.
+
+### Código en R
+
+```{r}
+
+dhyper(x = 3, m = 6, n = 294, k = 40)
+```
+
+### Interpretación:
+
+El resultado representa la probabilidad de que, al seleccionar 40 usuarios sin reemplazo de una población de 300 donde existen 6 bots, exactamente 3 de los usuarios seleccionados sean bots.
+
+------------------------------------------------------------------------
+
+## Ejercicio 17.b:
+
+Un producto electrónico registra en promedio 2.5 devoluciones por mes. Calcule la probabilidad de que en un trimestre (3 meses) se reciban exactamente 6 devoluciones.
+
+### Distribución:
+
+**Poisson**
+
+### Justificación:
+
+Se utiliza una distribución de Poisson porque se desea modelar el número de ocurrencias (devoluciones) en un intervalo fijo de tiempo (un trimestre), con una tasa promedio conocida y suponiendo que las devoluciones ocurren de manera independiente.
+
+Variable aleatoria:
+
+X = Número de devoluciones durante un trimestre. X \~ Poisson(λ = 7.5)
+
+donde: 
+-λ mensual = 2.5 devoluciones/mes 
+-λ trimestral = 2.5 × 3 = 7.5 devoluciones/trimestre
+
+### Probabilidad solicitada:
+
+P(X = 6)
+
+### Función utilizada:
+
+dpois(x, lambda)
+
+-x = número de ocurrencias deseadas. -lambda = número promedio de ocurrencias en el intervalo.
+
+### Código en R
+
+```{r}
+dpois(x = 6,
+      lambda = 7.5)
+```
+
+### Interpretación:
+
+El resultado representa la probabilidad de que durante un trimestre se registren exactamente 6 devoluciones, sabiendo que el promedio esperado es de 7.5 devoluciones por trimestre.
+
+---
+## Ejercicio 17.c:
+
+Un desarrollador arregla en promedio el 30 % de los reportes de errores al primer intento. Los intentos se prolongan hasta lograr arreglar el segundo reporte. Calcule la probabilidad de que se requieran exactamente 6 intentos.
+
+### Distribución:
+
+**Binomial Negativa**
+
+### Justificación:
+
+Se utiliza una distribución Binomial Negativa porque cada intento tiene dos posibles resultados (éxito o fracaso), la probabilidad de éxito permanece constante (p = 0.30), los intentos son independientes y el experimento termina cuando se alcanza un número fijo de éxitos (2 reportes arreglados).
+
+Variable aleatoria:
+
+X = Número total de intentos necesarios para lograr el segundo reporte arreglado.
+X ~ Binomial Negativa(r = 2, p = 0.30)
+
+### Probabilidad solicitada:
+
+P(X = 6)
+
+### Función utilizada:
+
+dnbinom(x, size, prob)
+
+-x    = número de fracasos antes del último éxito.
+-size = número de éxitos requeridos.
+-prob = probabilidad de éxito.
+
+### Código en R
+
+```{r}
+dnbinom(x = 4,
+        size = 2,
+        prob = 0.30)
+```
+
+### Interpretación:
+
+El resultado representa la probabilidad de que el desarrollador necesite exactamente 6 intentos para conseguir arreglar exitosamente el segundo reporte.
+
+---
+## Ejercicio 17.d:
+
+De un grupo de 12 estudiantes, el 25 % obtiene históricamente calificación de honor. Calcule la probabilidad de que este ciclo al menos 4 estudiantes obtengan dicha calificación.
+
+### Distribución:
+
+**Binomial.**
+
+### Justificación:
+
+Se utiliza una distribución Binomial porque existe un número fijo de ensayos (12 estudiantes), cada estudiante puede obtener o no calificación de honor, la probabilidad de éxito es constante (p = 0.25) y se asume que los resultados son independientes.
+
+Variable aleatoria:
+
+X = Número de estudiantes que obtienen calificación de honor.
+X ~ Binomial(n = 12, p = 0.25)
+
+### Probabilidad solicitada:
+
+P(X ≥ 4)
+
+### Función utilizada:
+
+pbinom(x, size, prob)
+
+pbinom() calcula probabilidades acumuladas P(X ≤ x).
+Para probabilidades del tipo "al menos", se utiliza el complemento.
+
+### Código en R
+
+```{r}
+1 - pbinom(q = 3,
+           size = 12,
+           prob = 0.25)
+```
+
+Código equivalente utilizando lower.tail = FALSE
+
+```{r}
+pbinom(q = 3,
+       size = 12,
+       prob = 0.25,
+       lower.tail = FALSE)
+```
+
+### Interpretación:
+
+El resultado representa la probabilidad de que al menos 4 de los 12 estudiantes obtengan calificación de honor.
