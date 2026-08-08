@@ -1,0 +1,219 @@
+---
+title: "Ejercicios 9-12"
+author: "Fabio Ernesto Guardado Gil"
+date: "2026-08-08"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Bloque C - Distribución geométrica.
+
+## Problema 9. Validación de códigos de descuento.
+
+Un desarrollador prueba códigos de descuento generados aleatoriamente contra un sistema heredado hasta encontrar uno válido. Solo el 8% de los códigos generados resultan válidos.
+
+p = 0.08
+
+X = número de intento en el que ocurre el primer código válido.
+
+(a) Calcule la probabilidad de que el primer código válido corresponda al quinto intento.
+
+P (X=5) = dgeom(4, 0.08) = 5.73%
+
+```{r}
+prob <- dgeom(4, 0.08)
+print(prob * 100)
+```
+
+(b) Calcule la probabilidad de que se requieran más de diez intentos para obtener el primer código válido. P (X \>= 10) = 1 - pgeom(9, 0.08) = 43.44%
+
+```{r}
+prob <- 1 - pgeom(9, 0.08)
+print(prob * 100)
+```
+
+(c) Determine el número esperado de intentos.
+
+Para determinar el número esperado de intentos para lograr el primer éxito se aplica la fórmula de la esperanza matemática: E[X]= 1 / P.
+
+P = 0.08
+
+E[X] = 1 / 0.08 = 12.5
+
+```{r}
+intentos_esperados <- 1 / 0.08
+print(intentos_esperados)
+```
+
+(d) Suponga que ya se han realizado veinte intentos sin éxito. Con base en la propiedad de falta de memoria de la distribución geométrica, ¿cuántos intentos adicionales debe esperar el desarrollador hasta obtener el primer código válido? Justifique la respuesta.
+
+La propiedad de falta de memoria en la distribución geométrica se refiere a que los 20 intentos fallidos previos no alteran la probabilidad de conseguir un código válido en los siguientes intentos. Por lo tanto, el desarrollador debe esperar otros 12.5 intentos como al inicio, ya que se mantiene la probabilidad de éxito original.
+
+## Problema 10. Rechazo de transacciones por sospecha de fraude.
+
+Una plataforma de pagos rechaza el 12% de las transacciones por sospecha de fraude, incluso aquellas
+provenientes de usuarios legítimos. Un usuario legítimo intenta transacciones sucesivas hasta lograr
+una aceptada.
+
+p_rechazo = 0.12
+
+p_exito = 1 - p_rechazo = 0.88
+
+X = número de intento en el que la transacción es aceptada.
+
+(a) Calcule la probabilidad de que su primer intento sea rechazado y el segundo aceptado.
+
+P (X = 2) = dgeom(1, 0.88) = 10.56%
+
+```{r}
+prob <- dgeom(1, 0.88)
+print(prob * 100)
+
+```
+
+(b) Suponga que se han rechazado tres transacciones consecutivas. Calcule la probabilidad de que la
+cuarta sea aceptada, discutiendo el resultado a la luz de la propiedad de falta de memoria.
+
+
+La probabilidad de que el cuarto intento sea aceptado no depende de los rechazos anteriores. La probabilidad de que el cuarto intento sea aceptado es la misma de un primer intento. Se puede comprobar mediante la fórmula de la propiedad de falta de memoria:
+
+P(X = 3 + 1 | X > 3) = P(X = 1)
+
+Donde:
+P(X = 3 + 1 | X > 3): Probabilidad de que la primera transacción aceptada sea la cuarta sabiendo que las primeras tres fueron rechazadas.
+P(X = 1) = Probabilidad de que la transacción sea aprobada en el primer intento.
+
+```{r}
+prob_primer_intento <- dgeom(0, 0.88)
+prob_cuarto_intento <- dgeom(3, 0.88)
+prob_mas_tres_intentos <- 1 - pgeom(2, 0.88)
+
+cat("Probabilidad condicional del cuarto intento sabiendo que los 3 anteriores fallaron: ", prob_cuarto_intento / prob_mas_tres_intentos * 100, "% \n")
+
+cat("Probabilidad de que ocurra en el primer intento: ", prob_primer_intento * 100, "% \n")
+
+```
+
+(c) La empresa considera "abandono del usuario" cuando este requiere más de tres intentos para
+lograr una transacción exitosa. Calcule el porcentaje de usuarios legítimos que, bajo este criterio,
+se clasificaría como abandono.
+
+P(X > 3) = 1 - pgeom(2, 0.88) = 0.17 %
+
+```{r}
+prob <- 1 - pgeom(2, 0.88)
+
+cat("Porcentaje de abandono:", prob * 100, "% \n")
+
+```
+
+## Problema 11. Costo esperado de depuración
+
+Un desarrollador debe encontrar la causa raíz de un error en producción. Cada iteración de prueba tiene un costo de infraestructura de $50 en tiempo de cómputo, y la probabilidad de identificar la causa raíz en una iteración cualquiera es del 15 %.
+
+p = 0.15
+
+X = Número de intento donde se identifica la causa raíz
+
+(a) Determine el número esperado de iteraciones necesarias para identificar la causa raíz.
+
+E[X] = 1 / 0.15 = 6.67
+
+```{r}
+iteraciones_esperadas <- 1 / 0.15
+print(iteraciones_esperadas)
+```
+
+(b) Determine el costo total esperado del proceso de depuración.
+
+Costo total = iteraciones x costo por iteración
+
+```{r}
+iteraciones_esperadas <- 6.67
+costo_iteracion <- 50
+costo_total <- iteraciones_esperadas * costo_iteracion
+cat("Costo total: $", costo_total)
+```
+
+(c) Calcule la probabilidad de que el costo total exceda los $500 (es decir, que se requieran más de diez iteraciones).
+
+P(X \> 10) = 1 - pgeom(9, 0.15) = 19.69%
+
+```{r}
+prob <- 1 - pgeom(9, 0.15)
+print(prob * 100)
+
+```
+
+(d) La empresa evalúa migrar a una plataforma cuya probabilidad de identificación es del 30% por iteración, pero cuyo costo por iteración asciende a $85. Determine cuál plataforma minimiza el costo esperado y comente el resultado.
+
+p_2 = 0.30
+
+costo_2 = 85
+
+E[X] = 1 / 0.30 = 3.33 iteraciones
+
+```{r}
+iteraciones_esperadas_2 <- 1 / 0.30
+print(iteraciones_esperadas_2)
+```
+
+```{r}
+costo_total_1 <- 333.5
+iteraciones_esperadas <- 3.33
+costo_iteracion <- 85
+costo_total_2 = iteraciones_esperadas * costo_iteracion
+cat("Costo total: $", costo_total_2, "\n")
+cat("Diferencia plataforma actual vs nueva plataforma: $", costo_total_1 - costo_total_2)
+```
+
+### Conclusión
+
+A pesar de que la nueva plataforma tiene un costo por iteración más alto, su mayor probabilidad de identificación hace que el proceso sea más eficiente al requerir menos iteraciones, de esta forma reduce el costo total y genera un ahorro de $50.45 por proceso de depuración.
+
+## Problema 12. Muestreo hasta detectar defectos.
+
+Un ingeniero de calidad muestrea piezas de una línea de producción hasta encontrar tres piezas
+defectuosas. La proporción de piezas defectuosas en dicha línea es del 4 %.
+
+p = 0.04
+
+X = Encontrar una pieza defectuosa
+
+r = 3 piezas defectuosas (éxito)
+
+(a) Calcule la probabilidad de que sean necesarias exactamente cincuenta piezas para completar el
+muestreo.
+
+X = 50 - 3 = 47
+
+P(X = 50) = dnbinom(47, 3, 0.04) = 1.10%
+
+```{r}
+prob <- dnbinom(47, 3, 0.04)
+print(prob * 100)
+
+```
+(b) Determine el número esperado de piezas que deberá muestrear.
+
+
+E[X] = 3 / 0.04 = 75 piezas
+
+```{r}
+piezas_esperadas <- 3 / 0.04
+print(piezas_esperadas)
+```
+(c) Calcule la probabilidad de que el muestreo termine con cuarenta piezas o menos.
+
+X = 40 - 3 = 37
+
+P(X <= 40) = pnbinom(37, 3, 0.04) = 21.45%
+
+```{r}
+prob <- pnbinom(37, 3, 0.04)
+print(prob * 100)
+
+```
