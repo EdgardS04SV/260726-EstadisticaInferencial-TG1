@@ -1,3 +1,10 @@
+---
+title: "Ejercicios 5-8: Distribución de Poisson"
+author: "Aldo Landaverde"
+date: "2026-08-09"
+output: pdf_document
+---
+
 # Bloque B - Distribucion de Poisson
 ## Problema 5. Siniestralidad en una carretera urbana.
 Una carretera urbana registra en promedio 2.3 accidentes por semana.
@@ -29,6 +36,7 @@ print(prob * 100)
 ```
 
 
+
 La Probabilidad de que ocurran 5 accidentes en el período de 2 semanas es de 17.2525 %
 
 (b)  Calcule la probabilidad de que ocurra al menos un accidente en un día cualquiera.
@@ -50,6 +58,7 @@ k <- 0
 prob <- 1 - dpois(x = k, lambda = lambda_d)
 print(prob * 100)
 ```
+
 
 
 La probabilidad de que en un día ocurra al menos un accidente en esa carretera 28.00485%.
@@ -78,6 +87,7 @@ q <- 7
 prob <- ppois(q = q, lambda = lambda_mes)
 print(prob * 100)
 ```
+
 
 
 La probabilidad que en un mes de 30 días ocurran menos de 8 accidentes es de 23.3366% en esa carretera.
@@ -121,6 +131,7 @@ print(prob * 100)
 
 
 
+
 La probabilidad que el centro de llamadas se sature a una hora cualquiera con tres agentes disponibles es de 73.2389%
 
 (b) Determine el número mínimo de agentes que deben contratarse para que la probabilidad de saturación en una hora sea inferior al 5 %
@@ -143,6 +154,7 @@ print(capacidad_min)
 numero_agentes <- ceiling(capacidad_min / capacidad_a)
 print(numero_agentes)
 ```
+
 
 
 Para reducir la saturación a menos del 5%, tomamos el percentil 95 para calcular las llamadas que se pueden atender dentro del límite de saturación. Lo que corresponde a 22 llamadas por hora.
@@ -174,6 +186,7 @@ k <- 25
 prob <- dpois(x = k, lambda = lambda_total)
 print(prob * 100)
 ```
+
 
 La probabilidad que el servidor reciba 25 solicitudes de de 4.4588%
 
@@ -216,6 +229,7 @@ print(prob_ii * 100)
 
 
 
+
 El evento (i) tiene un 0.7185654% de probabilidad de ocurrir, mientras que el evento (ii) tiene un 4.458765% de ocurrencia por lo que el evento (ii) es más probable.
 
 ## Problema 8. Cajero con demanda variable
@@ -242,6 +256,7 @@ k <- 20
 prob_alta <- dpois(x = k, lambda = lambda_alta)
 print(prob_alta * 100)
 ```
+
 
 La probabilidad que durante el periodo de alta demanda lleguen 20 clientes en 2 horas es de 5.5920%
 
@@ -297,5 +312,6 @@ prob_baja <- 1 - ppois(q = k_baja, lambda = lambda_baja)
 prob_total <- prob_alta * prob_baja
 print(prob_total * 100)
 ```
+
 
 La probabilidad que al menos lleguen 5 clientes en la primera media hora del periodo de alta demanda y al menos 3 clientes en la primera hora de periodo regular es de 21.4091%
